@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pranay Pankaj — Product Development &amp; Embedded Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14181a;
+    --bg-alt:#1a2023;
+    --surface:#1f2629;
+    --surface-raised:#242c2f;
+    --text:#eeeae2;
+    --text-dim:#9aa3a1;
+    --text-faint:#5f6a68;
+    --copper:#c97a3d;
+    --copper-bright:#e29b5c;
+    --teal:#54897d;
+    --line:#333b3d;
+    --alert:#d8571f;
+    --radius:3px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  ::selection{background:var(--copper);color:var(--bg);}
+
+  /* ---------- layout shell ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    max-width:1180px;
+    margin:0 auto;
+  }
+  @media (max-width:860px){
+    .shell{grid-template-columns:1fr;}
+  }
+
+  /* ---------- side index ---------- */
+  .index{
+    position:sticky;
+    top:0;
+    align-self:start;
+    height:100vh;
+    padding:48px 0 48px 32px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  @media (max-width:860px){
+    .index{position:static;height:auto;padding:24px 24px 0 24px;flex-direction:row;align-items:center;justify-content:space-between;}
+  }
+  .index-mark{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.02em;
+  }
+  .index-mark span{color:var(--copper);}
+  .index-nav{
+    position:relative;
+    padding-left:18px;
+    border-left:1px solid var(--line);
+  }
+  @media (max-width:860px){ .index-nav{display:none;} }
+  .index-nav a{
+    display:block;
+    position:relative;
+    font-size:13px;
+    color:var(--text-faint);
+    text-decoration:none;
+    padding:8px 0;
+    transition:color .2s ease;
+  }
+  .index-nav a::before{
+    content:'';
+    position:absolute;
+    left:-19px;
+    top:14px;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:var(--text-faint);
+    transition:background .2s ease, box-shadow .2s ease;
+  }
+  .index-nav a.active{color:var(--copper-bright);}
+  .index-nav a.active::before{
+    background:var(--copper);
+    box-shadow:0 0 0 3px rgba(201,122,61,0.2);
+  }
+  .index-foot{
+    font-size:12px;
+    color:var(--text-faint);
+    font-family:'IBM Plex Mono',monospace;
+  }
+  @media (max-width:860px){ .index-foot{display:none;} }
+
+  /* ---------- main column ---------- */
+  main{padding:48px 32px 120px 32px;}
+  @media (max-width:860px){ main{padding:32px 20px 80px 20px;} }
+  section{padding-top:96px;}
+  section:first-of-type{padding-top:0;}
+  @media (max-width:860px){ section{padding-top:64px;} }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--teal);
+    margin-bottom:14px;
+  }
+  .eyebrow::before{content:'// ';color:var(--text-faint);}
+
+  /* ---------- hero ---------- */
+  .hero h1{
+    font-size:clamp(38px,6vw,64px);
+    line-height:1.03;
+    margin-bottom:18px;
+  }
+  .hero .role{
+    font-size:clamp(16px,2.2vw,20px);
+    color:var(--copper-bright);
+    font-family:'IBM Plex Mono',monospace;
+    margin-bottom:24px;
+  }
+  .hero p.lead{
+    max-width:56ch;
+    color:var(--text-dim);
+    font-size:17px;
+    margin-bottom:36px;
+  }
+  .trace-wrap{width:100%;max-width:640px;height:70px;margin-bottom:8px;}
+  .trace-wrap svg{width:100%;height:100%;display:block;}
+  .trace-line{
+    fill:none;
+    stroke:var(--copper);
+    stroke-width:1.6;
+    stroke-linecap:round;
+    stroke-dasharray:900;
+    stroke-dashoffset:900;
+    animation:draw 2.1s ease-out forwards .3s;
+  }
+  .trace-dot{
+    fill:var(--copper-bright);
+    opacity:0;
+    animation:dotIn .4s ease-out forwards 2.2s;
+  }
+  @keyframes draw{to{stroke-dashoffset:0;}}
+  @keyframes dotIn{to{opacity:1;}}
+  @media (prefers-reduced-motion: reduce){
+    .trace-line{animation:none;stroke-dashoffset:0;}
+    .trace-dot{animation:none;opacity:1;}
+  }
+
+  .hero-links{display:flex;gap:24px;flex-wrap:wrap;}
+  .hero-links a{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--text-dim);
+    text-decoration:none;
+    border-bottom:1px solid var(--line);
+    padding-bottom:2px;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .hero-links a:hover{color:var(--copper-bright);border-color:var(--copper);}
+
+  /* ---------- generic section heads ---------- */
+  h2.head{
+    font-size:clamp(24px,3vw,32px);
+    margin-bottom:36px;
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+  }
+  h2.head .idx{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px;
+    color:var(--text-faint);
+  }
+
+  /* ---------- profile ---------- */
+  .profile p{max-width:64ch;color:var(--text-dim);font-size:16.5px;}
+  .profile p + p{margin-top:14px;}
+
+  /* ---------- experience ---------- */
+  .exp-item{
+    border-top:1px solid var(--line);
+    padding:28px 0;
+    display:grid;
+    grid-template-columns:1fr 2fr;
+    gap:24px;
+  }
+  .exp-item:last-child{border-bottom:1px solid var(--line);}
+  @media (max-width:640px){ .exp-item{grid-template-columns:1fr;gap:10px;} }
+  .exp-org{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;}
+  .exp-role{color:var(--copper-bright);font-family:'IBM Plex Mono',monospace;font-size:13px;margin-top:4px;}
+  .exp-dates{color:var(--text-faint);font-family:'IBM Plex Mono',monospace;font-size:12.5px;margin-top:6px;}
+  .exp-body ul{list-style:none;color:var(--text-dim);font-size:15px;}
+  .exp-body li{padding-left:16px;position:relative;margin-bottom:8px;}
+  .exp-body li::before{content:'–';position:absolute;left:0;color:var(--teal);}
+
+  /* ---------- projects ---------- */
+  .project{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--surface);
+    margin-bottom:28px;
+    overflow:hidden;
+  }
+  .project-head{
+    padding:26px 28px 22px 28px;
+    border-bottom:1px solid var(--line);
+  }
+  .project-domain{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--teal);
+    margin-bottom:10px;
+  }
+  .project-head h3{font-size:21px;margin-bottom:8px;}
+  .project-obj{color:var(--text-dim);font-size:15px;max-width:60ch;}
+
+  .project-body{display:block;}
+
+  .stage-tabs{
+    display:flex;
+    border-bottom:1px solid var(--line);
+    overflow-x:auto;
+  }
+  .stage-tabs button{
+    background:none;border:none;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--text-faint);
+    padding:14px 16px;
+    cursor:pointer;
+    white-space:nowrap;
+    border-bottom:2px solid transparent;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .stage-tabs button.active{color:var(--copper-bright);border-color:var(--copper);}
+  .stage-panel{padding:22px 24px 24px 24px;min-height:150px;}
+  .stage-panel p{color:var(--text-dim);font-size:14.5px;display:none;}
+  .stage-panel p.active{display:block;}
+
+  .tech-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:0 28px 24px 28px;
+  }
+  .tech-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--text-dim);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:5px 9px;
+  }
+  .outcome-row{
+    border-top:1px solid var(--line);
+    padding:18px 28px;
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+  }
+  .outcome-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--teal);white-space:nowrap;}
+  .outcome-text{color:var(--text);font-size:14.5px;}
+
+  /* ---------- skills / control panel ---------- */
+  .panel{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .panel-group{background:var(--surface);padding:20px 22px;}
+  .panel-group h4{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--text-faint);
+    margin-bottom:14px;
+    font-weight:500;
+  }
+  .switch-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:6px 0;
+    cursor:pointer;
+    user-select:none;
+  }
+  .switch{
+    width:26px;height:14px;
+    border-radius:8px;
+    background:var(--bg-alt);
+    border:1px solid var(--line);
+    position:relative;
+    flex-shrink:0;
+    transition:background .2s ease;
+  }
+  .switch::after{
+    content:'';
+    position:absolute;
+    top:1px;left:1px;
+    width:10px;height:10px;
+    border-radius:50%;
+    background:var(--text-faint);
+    transition:transform .2s ease, background .2s ease;
+  }
+  .switch-row.on .switch{background:rgba(201,122,61,0.18);border-color:var(--copper);}
+  .switch-row.on .switch::after{transform:translateX(12px);background:var(--copper-bright);}
+  .switch-row span{font-size:14px;color:var(--text-dim);transition:color .2s ease;}
+  .switch-row.on span{color:var(--text);}
+
+  /* ---------- contact ---------- */
+  .terminal{
+    background:var(--bg-alt);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px 30px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px;
+    max-width:520px;
+  }
+  .terminal .ln{margin-bottom:10px;color:var(--text-dim);}
+  .terminal .ln .k{color:var(--teal);}
+  .terminal .ln .v{color:var(--text);}
+  .copy-btn{
+    background:none;
+    border:1px solid var(--line);
+    color:var(--text-faint);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:3px 8px;
+    margin-left:10px;
+    border-radius:2px;
+    cursor:pointer;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .copy-btn:hover{color:var(--copper-bright);border-color:var(--copper);}
+  footer{
+    padding:40px 32px;
+    color:var(--text-faint);
+    font-size:12.5px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="index">
+    <div>
+      <div class="index-mark">PP<span>·</span>PORTFOLIO</div>
+      <nav class="index-nav" id="indexNav">
+        <a href="#profile" data-sec="profile">Profile</a>
+        <a href="#experience" data-sec="experience">Experience</a>
+        <a href="#projects" data-sec="projects">Projects</a>
+        <a href="#skills" data-sec="skills">Skills</a>
+        <a href="#contact" data-sec="contact">Contact</a>
+      </nav>
+    </div>
+    <div class="index-foot">Bhopal, India</div>
+  </aside>
+
+  <main>
+
+    <section class="hero" id="top">
+      <div class="trace-wrap">
+        <svg viewBox="0 0 640 70" preserveAspectRatio="none">
+          <path class="trace-line" d="M0,40 L60,40 L80,15 L100,55 L120,15 L140,55 L160,40 L220,40 L240,20 L260,40 L400,40 L420,10 L440,60 L460,40 L640,40"/>
+          <circle class="trace-dot" cx="640" cy="40" r="4"/>
+        </svg>
+      </div>
+      <h1>Pranay Pankaj</h1>
+      <div class="role">Product Development — Electronics · Embedded Systems · Robotics · IoT</div>
+      <p class="lead">I take products from a sketched idea to a tested, working prototype — sensors, circuits, firmware, enclosure, and the failures in between. Currently Lead STEM Trainer at Aviotron Aerospace, previously Product Development at Indeyes Infotech.</p>
+      <div class="hero-links">
+        <a href="#projects">View projects</a>
+        <a href="#contact">Get in touch</a>
+        <a href="mailto:pranaypankaj28@gmail.com">pranaypankaj28@gmail.com</a>
+      </div>
+    </section>
+
+    <section id="profile">
+      <div class="eyebrow">01 — who I am</div>
+      <h2 class="head">Profile</h2>
+      <div class="profile">
+        <p>Product development professional with hands-on experience across electronics, embedded firmware, robotics, and IoT — building working prototypes rather than just specifying them on paper.</p>
+        <p>My work spans the full build cycle: defining the problem, selecting and integrating components, developing circuits and firmware, assembling and housing the prototype, then testing it under real conditions and iterating on what breaks. I currently apply this at Aviotron Aerospace, building robotics and STEM product prototypes, with prior experience in product development at Indeyes Infotech, Bhopal.</p>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="eyebrow">02 — where I've built this</div>
+      <h2 class="head">Experience</h2>
+
+      <div class="exp-item">
+        <div>
+          <div class="exp-org">Indeyes Infotech, Bhopal</div>
+          <div class="exp-role">Product Development</div>
+          <div class="exp-dates"><!-- Pranay: add employment dates here --> DATES</div>
+        </div>
+        <div class="exp-body">
+          <ul>
+            <li>Worked concept-to-prototype: component selection, circuit development, and mechanical integration for new product builds.</li>
+            <li>Built and tested functional prototypes, troubleshooting hardware and firmware issues through iteration.</li>
+            <li>Handled implementation details — wiring, enclosure fit, and validation — that separate a working product from a working demo.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div>
+          <div class="exp-org">Aviotron Aerospace Pvt. Ltd.</div>
+          <div class="exp-role">Lead STEM Trainer</div>
+          <div class="exp-dates"><!-- Pranay: add employment dates here --> DATES — Present</div>
+        </div>
+        <div class="exp-body">
+          <ul>
+            <li>Design and build robotics, automation, and IoT prototypes used as STEM product demonstrations and lab equipment.</li>
+            <li>Lead technical build and troubleshooting for competition and lab projects, translating concepts into working hardware.</li>
+            <li>Bridge product development thinking into an educational context — building products that have to actually work in front of an audience, every time.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="eyebrow">03 — what I've built</div>
+      <h2 class="head">Selected projects</h2>
+
+      <!-- PROJECT 1 -->
+      <article class="project" data-project="1">
+        <div class="project-head">
+          <div class="project-domain">IoT · Embedded Systems · Mechatronics</div>
+          <h3>Smart Automated Access &amp; Ambient IoT Ecosystem</h3>
+          <p class="project-obj">A touchless entry system paired with occupancy-aware lighting, built to cut unnecessary power draw and remove a high-touch entry point.</p>
+        </div>
+        <div class="project-body">
+          <div>
+            <div class="stage-tabs">
+              <button class="active" data-stage="problem">Problem</button>
+              <button data-stage="design">Design</button>
+              <button data-stage="prototype">Prototype</button>
+              <button data-stage="testing">Testing</button>
+            </div>
+            <div class="stage-panel">
+              <p class="active" data-stage="problem">Manual doors and static lighting waste energy and create a high-touch surface at every entry — a bad combination for both efficiency and hygiene.</p>
+              <p data-stage="design">PIR and ultrasonic sensors detect approach and trigger a servo/stepper-driven door mechanism. An ESP32 handles sensing and connects to a cloud dashboard (Blynk/MQTT) for remote monitoring, while an LDR-based circuit dims ambient lighting based on daylight and occupancy.</p>
+              <p data-stage="prototype">Built a working enclosure that kept the sensor housing minimal and unobtrusive, so the mechanism reads as part of the space rather than a bolted-on gadget.</p>
+              <p data-stage="testing">Tested detection range and false-trigger rate at varying approach angles, and validated that lighting response tracked ambient light changes without visible flicker or lag.</p>
+            </div>
+            <div class="tech-row">
+              <span class="tech-chip">ESP32 / ESP8266</span>
+              <span class="tech-chip">PIR + ultrasonic</span>
+              <span class="tech-chip">Servo/stepper drive</span>
+              <span class="tech-chip">MQTT / Blynk</span>
+              <span class="tech-chip">LDR dimming</span>
+            </div>
+          </div>
+        </div>
+        <div class="outcome-row">
+          <div class="outcome-label">OUTCOME</div>
+          <div class="outcome-text">Touchless entry with adaptive lighting that only runs at full brightness when a space is actually occupied.</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 2 -->
+      <article class="project" data-project="2">
+        <div class="project-head">
+          <div class="project-domain">Robotics · Renewable Energy · Computer Vision</div>
+          <h3>Autonomous Solar-Powered Agricultural Rover</h3>
+          <p class="project-obj">A self-powered field rover that monitors soil and crop health without a person walking the field.</p>
+        </div>
+        <div class="project-body">
+          <div>
+            <div class="stage-tabs">
+              <button class="active" data-stage="problem">Problem</button>
+              <button data-stage="design">Design</button>
+              <button data-stage="prototype">Prototype</button>
+              <button data-stage="testing">Testing</button>
+            </div>
+            <div class="stage-panel">
+              <p class="active" data-stage="problem">Manually scouting fields for soil and crop condition is slow, inconsistent, and doesn't scale.</p>
+              <p data-stage="design">A photovoltaic panel with a battery-management circuit powers the rover indefinitely in the field. Soil moisture and temperature/humidity sensors log ground conditions, an ESP32-CAM captures crop imagery, and ultrasonic/IR sensors handle obstacle avoidance.</p>
+              <p data-stage="prototype">Assembled the drive base, solar charging circuit, and sensor payload into a single rover chassis built to survive uneven outdoor terrain.</p>
+              <p data-stage="testing">Ran field trials checking navigation reliability around obstacles and logging consistency of soil/crop readings over repeated passes.</p>
+            </div>
+            <div class="tech-row">
+              <span class="tech-chip">Solar + battery mgmt</span>
+              <span class="tech-chip">ESP32-CAM</span>
+              <span class="tech-chip">Soil moisture / temp-humidity</span>
+              <span class="tech-chip">Ultrasonic / IR avoidance</span>
+            </div>
+          </div>
+        </div>
+        <div class="outcome-row">
+          <div class="outcome-label">OUTCOME</div>
+          <div class="outcome-text">Continuous, autonomous soil and crop monitoring without manual field walks.</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 3 -->
+      <article class="project" data-project="3">
+        <div class="project-head">
+          <div class="project-domain">Industrial IoT · Data Analytics · Hardware Prototyping</div>
+          <h3>Industrial Predictive Maintenance Vibration Analyzer</h3>
+          <p class="project-obj">A compact device that reads machine vibration and flags a developing fault before it causes downtime.</p>
+        </div>
+        <div class="project-body">
+          <div>
+            <div class="stage-tabs">
+              <button class="active" data-stage="problem">Problem</button>
+              <button data-stage="design">Design</button>
+              <button data-stage="prototype">Prototype</button>
+              <button data-stage="testing">Testing</button>
+            </div>
+            <div class="stage-panel">
+              <p class="active" data-stage="problem">Machinery failures often show up after the fact — by then, the downtime cost is already locked in.</p>
+              <p data-stage="design">An MPU6050 accelerometer captures real-time vibration, processed onboard with an FFT to isolate abnormal frequency components. Threshold breaches trigger an alert and can cut power to the monitored motor automatically.</p>
+              <p data-stage="prototype">Built the sensor-plus-microcontroller unit into a compact housing designed to clamp directly onto machinery.</p>
+              <p data-stage="testing">Validated the FFT output against known-good vibration signatures and deliberately induced fault conditions to confirm the alert threshold triggered correctly.</p>
+            </div>
+            <div class="tech-row">
+              <span class="tech-chip">MPU6050 accelerometer</span>
+              <span class="tech-chip">On-device FFT</span>
+              <span class="tech-chip">Threshold alerting</span>
+              <span class="tech-chip">Motor cutoff relay</span>
+            </div>
+          </div>
+        </div>
+        <div class="outcome-row">
+          <div class="outcome-label">OUTCOME</div>
+          <div class="outcome-text">An early-warning layer that flags abnormal vibration before it becomes a failure.</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 4 -->
+      <article class="project" data-project="4">
+        <div class="project-head">
+          <div class="project-domain">Embedded Systems · Security · Logistics</div>
+          <h3>Biometric &amp; NFC-Enabled Industrial Asset Tracker</h3>
+          <p class="project-obj">A secure checkout station for tools and equipment, replacing manual sign-out sheets with a logged, dual-authenticated system.</p>
+        </div>
+        <div class="project-body">
+          <div>
+            <div class="stage-tabs">
+              <button class="active" data-stage="problem">Problem</button>
+              <button data-stage="design">Design</button>
+              <button data-stage="prototype">Prototype</button>
+              <button data-stage="testing">Testing</button>
+            </div>
+            <div class="stage-panel">
+              <p class="active" data-stage="problem">Manual tool checkout logs are easy to skip and hard to audit, and equipment condition often goes unrecorded.</p>
+              <p data-stage="design">Dual authentication combines an RFID/NFC reader with a fingerprint sensor (R307). Each transaction — user, timestamp, return status — logs to an OLED display and a cloud database, with optional GPS/geofencing for mobile assets.</p>
+              <p data-stage="prototype">Built the reader and display into a single station housing, sized to sit at a tool crib without getting in the way.</p>
+              <p data-stage="testing">Ran repeated checkout/return cycles to confirm logging accuracy and verified the dual-auth flow rejected invalid attempts correctly.</p>
+            </div>
+            <div class="tech-row">
+              <span class="tech-chip">RFID / NFC</span>
+              <span class="tech-chip">Fingerprint (R307)</span>
+              <span class="tech-chip">OLED display</span>
+              <span class="tech-chip">Cloud logging</span>
+              <span class="tech-chip">GPS / geofencing</span>
+            </div>
+          </div>
+        </div>
+        <div class="outcome-row">
+          <div class="outcome-label">OUTCOME</div>
+          <div class="outcome-text">An auditable, dual-authenticated checkout log that replaced manual sign-out sheets.</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 5 -->
+      <article class="project" data-project="5">
+        <div class="project-head">
+          <div class="project-domain">Biomedical Engineering · Wearable Tech · Machine Learning</div>
+          <h3>AI-Powered Ergonomic Posture Correction Wearable</h3>
+          <p class="project-obj">A discreet wearable that catches poor posture during repetitive tasks and nudges the wearer to correct it in real time.</p>
+        </div>
+        <div class="project-body">
+          <div>
+            <div class="stage-tabs">
+              <button class="active" data-stage="problem">Problem</button>
+              <button data-stage="design">Design</button>
+              <button data-stage="prototype">Prototype</button>
+              <button data-stage="testing">Testing</button>
+            </div>
+            <div class="stage-panel">
+              <p class="active" data-stage="problem">Repetitive assembly-line tasks encourage slouching that builds into real injury risk over time.</p>
+              <p data-stage="design">IMU sensors placed along the upper back and shoulder feed a real-time ML classifier (trained via Edge Impulse) that distinguishes correct posture from slouching, paired with a haptic motor for gentle feedback.</p>
+              <p data-stage="prototype">Built the sensor and feedback unit into a low-profile wearable form, prioritizing comfort over a session of continuous wear.</p>
+              <p data-stage="testing">Tested classification accuracy across a range of posture positions and measured feedback latency from detected slouch to haptic cue.</p>
+            </div>
+            <div class="tech-row">
+              <span class="tech-chip">IMU sensors</span>
+              <span class="tech-chip">Edge Impulse ML</span>
+              <span class="tech-chip">Haptic feedback</span>
+              <span class="tech-chip">Wearable form factor</span>
+            </div>
+          </div>
+        </div>
+        <div class="outcome-row">
+          <div class="outcome-label">OUTCOME</div>
+          <div class="outcome-text">Real-time posture correction that intervenes before poor form becomes a habit.</div>
+        </div>
+      </article>
+
+    </section>
+
+    <section id="skills">
+      <div class="eyebrow">04 — the toolkit</div>
+      <h2 class="head">Skills</h2>
+      <div class="panel">
+        <div class="panel-group">
+          <h4>ELECTRONICS</h4>
+          <div class="switch-row on"><div class="switch"></div><span>Arduino</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>ESP32 / ESP8266</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>Sensor integration</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>Motor / actuator control</span></div>
+        </div>
+        <div class="panel-group">
+          <h4>EMBEDDED</h4>
+          <div class="switch-row on"><div class="switch"></div><span>C / C++</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>Microcontroller firmware</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>IoT protocols (MQTT)</span></div>
+        </div>
+        <div class="panel-group">
+          <h4>ROBOTICS</h4>
+          <div class="switch-row on"><div class="switch"></div><span>Automation systems</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>Mobile robot platforms</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>Mechanism design</span></div>
+        </div>
+        <div class="panel-group">
+          <h4>PRODUCT DEVELOPMENT</h4>
+          <div class="switch-row on"><div class="switch"></div><span>Rapid prototyping</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>Testing &amp; validation</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>Build documentation</span></div>
+        </div>
+        <div class="panel-group">
+          <h4>PROGRAMMING</h4>
+          <div class="switch-row on"><div class="switch"></div><span>Python</span></div>
+          <div class="switch-row on"><div class="switch"></div><span>C / C++</span></div>
+        </div>
+        <div class="panel-group">
+          <h4>DESIGN</h4>
+          <!-- Pranay: keep only the CAD/design tools you actually use -->
+          <div class="switch-row"><div class="switch"></div><span>CAD tool (add yours)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="eyebrow">05 — reach me</div>
+      <h2 class="head">Contact</h2>
+      <div class="terminal">
+        <div class="ln"><span class="k">name</span> <span class="v">— Pranay Pankaj</span></div>
+        <div class="ln"><span class="k">role</span> <span class="v">— Lead STEM Trainer, Aviotron Aerospace Pvt. Ltd.</span></div>
+        <div class="ln"><span class="k">email</span> <span class="v" id="emailVal">pranaypankaj28@gmail.com</span><button class="copy-btn" data-copy="pranaypankaj28@gmail.com">copy</button></div>
+        <div class="ln"><span class="k">phone</span> <span class="v" id="phoneVal">9801291562</span><button class="copy-btn" data-copy="9801291562">copy</button></div>
+        <div class="ln"><span class="k">based</span> <span class="v">— Bhopal, India</span></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>Pranay Pankaj — Product Development, Electronics &amp; Embedded Systems Portfolio</footer>
+
+<script>
+  // Tab switching per project
+  document.querySelectorAll('.project').forEach(project => {
+    const tabs = project.querySelectorAll('.stage-tabs button');
+    const panels = project.querySelectorAll('.stage-panel p');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const stage = tab.dataset.stage;
+        tabs.forEach(t => t.classList.toggle('active', t === tab));
+        panels.forEach(p => p.classList.toggle('active', p.dataset.stage === stage));
+      });
+    });
+  });
+
+  // Skill switches toggle on click
+  document.querySelectorAll('.switch-row').forEach(row => {
+    row.addEventListener('click', () => row.classList.toggle('on'));
+  });
+
+  // Copy buttons
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.copy;
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'copied';
+        setTimeout(() => btn.textContent = original, 1200);
+      });
+    });
+  });
+
+  // Scroll-spy for side index
+  const sections = document.querySelectorAll('main section[id]');
+  const navLinks = document.querySelectorAll('.index-nav a');
+  const spy = () => {
+    let current = sections[0].id;
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= 140) current = sec.id;
+    });
+    navLinks.forEach(link => link.classList.toggle('active', link.dataset.sec === current));
+  };
+  window.addEventListener('scroll', spy);
+  spy();
+</script>
+
+</body>
+</html>
